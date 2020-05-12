@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "package": "me.geek.tom.debugrenderers.mixins.mixins",
+    "compatibilityLevel": "JAVA_8",
+    "refmap": "trace.refmap.json",
+    "mixins": [
+        "MixinDebugPacketSender",
+        "MixinDebugRenderer"
+    ],
+    "client": [
+        "MixinDebugRenderer"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

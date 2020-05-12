@@ -1,0 +1,25 @@
+modLoader="javafml" #mandatory
+loaderVersion="[31,)" #mandatory
+[[mods]] #mandatory
+modId="drenders" #mandatory
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+version="${file.jarVersion}" #mandatory
+ # A display name for the mod
+displayName="Debug Renderers" #mandatory
+authors="Tom_The_Geek" #optional
+description='''
+Enables the hidden debug renderers in the game!
+'''
+[[dependencies.drenders]] #optional
+    modId="forge" #mandatory
+    mandatory=true #mandatory
+    versionRange="[31,)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.drenders]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.15.2,)"
+    ordering="NONE"
+    side="BOTH"
+	
