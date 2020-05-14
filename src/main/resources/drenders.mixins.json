@@ -5,7 +5,8 @@
     "refmap": "trace.refmap.json",
     "mixins": [
         "MixinDebugPacketSender",
-        "MixinDebugRenderer"
+        "MixinDebugRenderer",
+        "MixinNetworkHooks"
     ],
     "client": [
         "MixinDebugRenderer"

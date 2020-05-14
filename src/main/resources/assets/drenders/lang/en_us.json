@@ -1,3 +1,10 @@
 {
-
+    "drenders.command.help.title": "Debug Renderers command help!",
+    "drenders.command.usage": "Usage: /drenderes <alloff|toggle|clear>",
+    "drenders.command.alloff.help": "Usage: /drenderers allof\nDescription: Disables all debug renderers",
+    "drenders.command.toggle.help": "Usage: /drenderers toggle <renderer>\nDescription: Toggles the state of any give renderer",
+    "drenders.command.clear.help": "Usage: /drenderers clear\nDescription: Resets the data for all renderers",
+    "drenders.command.toggle.ok": "Toggled!",
+    "drenders.command.alloff.ok": "All renderers have been disabled!",
+    "drenders.command.reset.ok": "Reset the state of all renderers!"
 }

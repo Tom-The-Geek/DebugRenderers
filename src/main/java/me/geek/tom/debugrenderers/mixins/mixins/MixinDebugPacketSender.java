@@ -2,10 +2,11 @@ package me.geek.tom.debugrenderers.mixins.mixins;
 
 import io.netty.buffer.Unpooled;
 import me.geek.tom.debugrenderers.utils.PacketUtils;
+import me.geek.tom.debugrenderers.utils.RenderersState;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
+import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.network.DebugPacketSender;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
@@ -53,7 +54,7 @@ public class MixinDebugPacketSender {
     @Inject(at = @At("HEAD"),
             method = "sendPath")
     private static void onSendPath(World world, MobEntity entity, Path path, float distance, CallbackInfo ci) {
-        if (!(world instanceof ServerWorld) || path == null) return;
+        if (!(world instanceof ServerWorld) || path == null || !RenderersState.INSTANCE.PATHFINDING) return;
 
         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
         buf.writeInt(entity.getEntityId()).writeFloat(distance);
@@ -75,7 +76,7 @@ public class MixinDebugPacketSender {
     @Inject(at = @At("HEAD"),
             method = "sendGoal")
     private static void onSendGoal(World world, MobEntity entity, GoalSelector selector, CallbackInfo ci) {
-        if (!(world instanceof ServerWorld)) return;
+        if (!(world instanceof ServerWorld) || !RenderersState.INSTANCE.ENTITY_AI) return;
 
         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
         buf.writeBlockPos(entity.getPosition());
@@ -98,6 +99,7 @@ public class MixinDebugPacketSender {
     @Inject(method = "func_218805_b", // POI Removed
             at = @At("HEAD"))
     private static void onPoiRemoved(ServerWorld world, BlockPos pos, CallbackInfo ci) {
+        if (!RenderersState.INSTANCE.POI) return;
         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
         buf.writeBlockPos(pos);
         func_229753_a_(world, buf, SCustomPayloadPlayPacket.DEBUG_POI_REMOVED);
@@ -116,6 +118,7 @@ public class MixinDebugPacketSender {
     @Inject(method = "func_218799_a",
             at = @At("HEAD"))
     private static void onPoiAdded(ServerWorld world, BlockPos pos, CallbackInfo ci) {
+        if (!RenderersState.INSTANCE.POI) return;
         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
 
         buf.writeBlockPos(pos);
@@ -139,6 +142,7 @@ public class MixinDebugPacketSender {
     @Inject(method = "sendBeehiveDebugData",
             at = @At("HEAD"))
     private static void onSendBeehiveDebugData(BeehiveTileEntity te, CallbackInfo ci) {
+        if (!RenderersState.INSTANCE.BEEHIVE) return;
         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
 
         buf.writeBlockPos(te.getPos());
@@ -148,5 +152,16 @@ public class MixinDebugPacketSender {
         buf.writeBoolean(te.isSmoked());
 
         func_229753_a_((ServerWorld) te.getWorld(), buf, SCustomPayloadPlayPacket.field_229728_n_);
+    }
+
+    @Inject(method = "func_229749_a_",
+            at = @At("HEAD"))
+    private static void onSendBeeDebugData(BeeEntity bee, CallbackInfo ci) {
+        if (!RenderersState.INSTANCE.BEE) return;
+        PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
+
+        PacketUtils.writeBeeToBuf(buf, bee);
+
+        func_229753_a_((ServerWorld) bee.getEntityWorld(), buf, SCustomPayloadPlayPacket.field_229727_m_);
     }
 }

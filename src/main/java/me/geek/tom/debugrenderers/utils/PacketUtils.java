@@ -1,16 +1,24 @@
 package me.geek.tom.debugrenderers.utils;
 
+import io.netty.buffer.Unpooled;
+import me.geek.tom.debugrenderers.DebugRenderers;
+import me.geek.tom.debugrenderers.utils.reflect.ReflectUtils;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
+import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.server.ServerWorld;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PacketUtils {
+
     /**
      * Path info debug packet structure
      * |- Reaches target flag (bool)
@@ -97,5 +105,58 @@ public class PacketUtils {
         buf.writeInt(idx);
         buf.writeBoolean(goal.isRunning());
         buf.writeString(goal.getGoal().toString(), 255);
+    }
+
+    /**
+     * Bee debug packet format
+     * |- Position of the bee (double,double,double)
+     * |- The UUID of the bee (UUID)
+     * |- Entity ID (int)
+     * |- Does a bee hive location follow (bool)
+     * |- If the previous was true, the position of the bee's hive (BlockPos)
+     * |- Does a flower location follow (bool)
+     * |- If the previous was true, the position of the flower (BlockPos)
+     * |- Travelling ticks (? couldn't find where this value is on the bee entity) (int)
+     * |- Does a path follow (bool)
+     * |- If the previous was true, the bee's current path (#writePathToBuffer)
+     * |- Number of strings in the following array (int)
+     * |- A list of the bee's goals? (List\<String\>)
+     * |- Length of the list of blacklisted Hives (int)
+     * |- List of the bee's blacklisted hives (BlockPos)
+     *
+     * @param buf The buffer to write to
+     * @param bee The bee entity to write
+     */
+    public static void writeBeeToBuf(PacketBuffer buf, BeeEntity bee) {
+        buf.writeDouble(bee.getPosX()).writeDouble(bee.getPosY()).writeDouble(bee.getPosZ());
+        buf.writeUniqueId(bee.getUniqueID());
+        buf.writeInt(bee.getEntityId());
+        boolean hive = bee.hasHive();
+        buf.writeBoolean(hive);
+        if (hive)
+            buf.writeBlockPos(bee.getHivePos());
+        boolean flower = bee.hasFlower();
+        buf.writeBoolean(flower);
+        if (flower)
+            buf.writeBlockPos(bee.getFlowerPos());
+        buf.writeInt(1); // TODO: Find travel ticks?
+        boolean hasPath = bee.hasPath();
+        buf.writeBoolean(hasPath);
+        if (hasPath)
+            writePathToBuffer(buf, bee.getNavigator().getPath());
+        List<String> goals = bee.goalSelector.getRunningGoals()
+                .map(PrioritizedGoal::getGoal).map(Goal::toString)
+                .collect(Collectors.toList());
+        buf.writeInt(goals.size());
+        for (String goal : goals)
+            buf.writeString(goal);
+        buf.writeInt(0); // TODO: Find where to get the blacklist from.
+    }
+    /**
+     * Sends a packet instructing the client to reset all debug renderers
+     */
+    public static void sendReset(ServerWorld world) {
+        PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
+        ReflectUtils.DebugPacketSender_func_229753_a_.call(null, world, buf, new ResourceLocation(DebugRenderers.MODID, "clear_all"));
     }
 }
