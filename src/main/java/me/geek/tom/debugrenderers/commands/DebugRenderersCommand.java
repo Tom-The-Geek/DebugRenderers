@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
+import me.geek.tom.debugrenderers.commands.arguments.RendererTypeArgument;
 import me.geek.tom.debugrenderers.utils.PacketUtils;
 import me.geek.tom.debugrenderers.utils.RenderersState;
 import net.minecraft.command.CommandSource;
@@ -52,7 +53,7 @@ public class DebugRenderersCommand {
     private static ArgumentBuilder<CommandSource, ?> toggleCommand(CommandDispatcher<CommandSource> dispatcher) {
         return Commands.literal("toggle")
                 .requires((sender) -> sender.hasPermissionLevel(0))
-                .then(Commands.argument("renderer", StringArgumentType.greedyString())
+                .then(Commands.argument("renderer", RendererTypeArgument.rendererType())
                     .executes(DebugRenderersCommand::toggle));
     }
 
@@ -65,6 +66,7 @@ public class DebugRenderersCommand {
     private static int help(CommandContext<CommandSource> ctx) {
         ctx.getSource().sendFeedback(HELP_TITLE, true);
         ctx.getSource().sendFeedback(HELP_USAGE, true);
+
         return 0;
     }
 
@@ -77,29 +79,16 @@ public class DebugRenderersCommand {
 
     private static int toggle(CommandContext<CommandSource> ctx) {
         ctx.getSource().sendFeedback(new TranslationTextComponent("drenders.command.toggle.ok"), true);
-        String renderer = getString(ctx, "renderer");
-        switch (renderer) {
-            case "bee":
-                RenderersState.INSTANCE.BEE = !RenderersState.INSTANCE.BEE;
-                break;
-            case "poi":
-                RenderersState.INSTANCE.POI = !RenderersState.INSTANCE.POI;
-                break;
-            case "paths":
-                RenderersState.INSTANCE.PATHFINDING = !RenderersState.INSTANCE.PATHFINDING;
-                break;
-            case "ai":
-                RenderersState.INSTANCE.ENTITY_AI = !RenderersState.INSTANCE.ENTITY_AI;
-                break;
-            case "hive":
-                RenderersState.INSTANCE.BEEHIVE = !RenderersState.INSTANCE.BEEHIVE;
-                break;
-        }
+        RenderersState.RendererType renderer = RendererTypeArgument.getUuid("renderer", ctx);
+        RenderersState.INSTANCE.toggle(renderer);
+
         return 0;
     }
+
     private static int alloff(CommandContext<CommandSource> ctx) {
         ctx.getSource().sendFeedback(new TranslationTextComponent("drenders.command.alloff.ok"), true);
         RenderersState.INSTANCE.disableAll();
+
         return 0;
     }
 }

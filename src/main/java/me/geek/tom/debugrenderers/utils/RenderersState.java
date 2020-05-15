@@ -5,6 +5,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
+import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
+
 import static me.geek.tom.debugrenderers.DebugRenderers.MODID;
 
 @Mod.EventBusSubscriber(modid = MODID)
@@ -12,40 +16,36 @@ public class RenderersState {
 
     public static RenderersState INSTANCE;
 
-    public boolean PATHFINDING = false;
-    public boolean ENTITY_AI = false;
-    public boolean POI = false;
-    public boolean BEEHIVE = false;
-    public boolean BEE = false;
+    private static Map<RendererType, Boolean> settings = new HashMap<>();
 
     public void disableAll() {
-        PATHFINDING = ENTITY_AI = POI = BEEHIVE = BEE = false;
-    }
-
-    public void setPATHFINDING(boolean PATHFINDING) {
-        this.PATHFINDING = PATHFINDING;
-    }
-
-    public void setENTITY_AI(boolean ENTITY_AI) {
-        this.ENTITY_AI = ENTITY_AI;
-    }
-
-    public void setPOI(boolean POI) {
-        this.POI = POI;
-    }
-
-    public void setBEEHIVE(boolean BEEHIVE) {
-        this.BEEHIVE = BEEHIVE;
-    }
-
-    public void setBEE(boolean BEE) {
-        this.BEE = BEE;
+        for (RendererType type : RendererType.values()) {
+            settings.put(type, false);
+        }
     }
 
     @SubscribeEvent
     public static void onServerStart(FMLServerStartingEvent event) {
         INSTANCE = new RenderersState();
         DebugRenderersCommand.register(event.getCommandDispatcher());
+        INSTANCE.disableAll();
     }
 
+    public boolean get(RendererType type) {
+        return settings.get(type);
+    }
+
+    public void toggle(RendererType type) {
+        settings.put(type, !settings.get(type));
+    }
+
+    public enum RendererType {
+        BEE,
+        POI,
+        PATHFINDING,
+        BEEHIVE,
+        ENTITY_AI,
+        RAID,
+        STRUCTURE
+    }
 }

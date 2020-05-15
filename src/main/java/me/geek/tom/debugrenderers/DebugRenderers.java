@@ -1,5 +1,8 @@
 package me.geek.tom.debugrenderers;
 
+import me.geek.tom.debugrenderers.commands.arguments.RendererTypeArgument;
+import net.minecraft.command.arguments.ArgumentSerializer;
+import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.util.SharedConstants;
 import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.common.Mod;
@@ -13,10 +16,11 @@ public class DebugRenderers {
 
     public DebugRenderers() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::init);
-        SharedConstants.developmentMode = true;
+        //SharedConstants.developmentMode = true;
     }
 
     private void init(FMLCommonSetupEvent event) {
         StartupMessageManager.addModMessage("drenders::init");
+        ArgumentTypes.register(MODID+":rtype", RendererTypeArgument.class, new ArgumentSerializer<>(RendererTypeArgument::rendererType));
     }
 }
