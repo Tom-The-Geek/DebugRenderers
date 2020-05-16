@@ -1,7 +1,6 @@
 package me.geek.tom.debugrenderers.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import me.geek.tom.debugrenderers.commands.arguments.RendererTypeArgument;
@@ -9,14 +8,11 @@ import me.geek.tom.debugrenderers.utils.PacketUtils;
 import me.geek.tom.debugrenderers.utils.RenderersState;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import static com.mojang.brigadier.arguments.StringArgumentType.getString;
-
+@SuppressWarnings("SameReturnValue")
 public class DebugRenderersCommand {
 
     public static void register(CommandDispatcher<CommandSource> dispatcher) {

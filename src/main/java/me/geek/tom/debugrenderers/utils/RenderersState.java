@@ -5,7 +5,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,7 +15,7 @@ public class RenderersState {
 
     public static RenderersState INSTANCE;
 
-    private static Map<RendererType, Boolean> settings = new HashMap<>();
+    private final Map<RendererType, Boolean> settings = new HashMap<>();
 
     public void disableAll() {
         for (RendererType type : RendererType.values()) {
@@ -31,6 +30,7 @@ public class RenderersState {
         INSTANCE.disableAll();
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean get(RendererType type) {
         return settings.get(type);
     }

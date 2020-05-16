@@ -3,7 +3,6 @@ package me.geek.tom.debugrenderers;
 import me.geek.tom.debugrenderers.commands.arguments.RendererTypeArgument;
 import net.minecraft.command.arguments.ArgumentSerializer;
 import net.minecraft.command.arguments.ArgumentTypes;
-import net.minecraft.util.SharedConstants;
 import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
