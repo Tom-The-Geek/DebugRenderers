@@ -6,5 +6,6 @@
     "drenders.command.clear.help": "Usage: /drenderers clear\nDescription: Resets the data for all renderers",
     "drenders.command.toggle.ok": "Toggled!",
     "drenders.command.alloff.ok": "All renderers have been disabled!",
-    "drenders.command.reset.ok": "Reset the state of all renderers!"
+    "drenders.command.reset.ok": "Reset the state of all renderers!",
+    "drenders.argument.rendertype.notfound": "That render type does not exist!"
 }

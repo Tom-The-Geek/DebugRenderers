@@ -7,9 +7,14 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import me.geek.tom.debugrenderers.utils.RenderersState;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class RendererTypeArgument implements ArgumentType<RenderersState.RendererType> {
@@ -42,8 +47,13 @@ public class RendererTypeArgument implements ArgumentType<RenderersState.Rendere
         try {
             return RenderersState.RendererType.valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new SimpleCommandExceptionType(new LiteralMessage(e.getMessage())).createWithContext(reader);
+            throw new SimpleCommandExceptionType(new TranslationTextComponent("drenders.argument.rendertype.notfound")).createWithContext(reader);
         }
+    }
+
+    @Override
+    public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
+        return ISuggestionProvider.suggest(EXAMPLES, builder);
     }
 
     @Override

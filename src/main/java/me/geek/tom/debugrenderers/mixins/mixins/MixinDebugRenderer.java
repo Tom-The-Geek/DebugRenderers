@@ -1,6 +1,7 @@
 package me.geek.tom.debugrenderers.mixins.mixins;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import me.geek.tom.debugrenderers.utils.RenderHelper;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.debug.*;
 import org.spongepowered.asm.mixin.Final;
@@ -38,6 +39,7 @@ public abstract class MixinDebugRenderer {
         field_217742_n.render(stack, buf, camX, camY, camZ); // Entity AI
         field_217741_m.render(stack, buf, camX, camY, camZ); // POI Info
         field_229017_n_.render(stack, buf, camX, camY, camZ); // Bee info
+        RenderHelper.renderNoCamOffset(structure::render, stack, buf, camX, camY, camZ);
         //field_222927_n.render(stack, buf, camX, camY, camZ); // Raid info
     }
 }
